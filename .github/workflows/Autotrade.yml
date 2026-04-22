@@ -1,6 +1,12 @@
-name: Daily Trading Bot (1pm–2:24pm)
+name: Trading Bot (Commit + Daily Session)
 
 on:
+  push:
+    branches:
+      - main
+      - master
+      - "*"     # runs on ANY branch you commit to
+
   schedule:
     # 1:00 PM CST = 18:00 UTC
     - cron: "0 18 * * 1-5"
@@ -16,16 +22,16 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.14.3"
+        python-version: "3.10"
 
     - name: Install dependencies
       run: |
         pip install requests
 
-    - name: Run trading bot from 1:00 PM to 2:24 PM
+    - name: Run trading bot (full 1pm–2:24pm session)
       run: |
         echo "Starting trading bot session..."
-        end=$(( $(date +%s) + 5040 ))  # 84 minutes = 5040 seconds
+        end=$(( $(date +%s) + 5040 ))  # 84 minutes = 1:00 PM → 2:24 PM
         while [ $(date +%s) -lt $end ]; do
           python trading.py
         done
