@@ -62,7 +62,7 @@ def check_cooldown(last_time, cooldown=60):
 
 print("Starting trading bot...\n")
 
-while True:
+for _ in range(3):   # run exactly 3 cycles
     for symbol in watchlist:
 
         print(f"--- Checking {symbol} ---")
@@ -93,14 +93,14 @@ while True:
         else:
             profit_pct = 0
 
-       
+        # BUY LOGIC
         if shares_held == 0 and check_cooldown(records[symbol]["last_trade_time"]):
             risk_amount = portfolio_value * 0.10
             shares_to_buy = int(risk_amount / current_price)
 
             if shares_to_buy > 0:
                 print(f"  BUY {shares_to_buy} shares of {symbol} at ${current_price:.2f}")
-                place_order(symbol, shares_to_buy, "buy")  # REAL ORDER
+                place_order(symbol, shares_to_buy, "buy")
                 records[symbol]["shares_held"] = shares_to_buy
                 records[symbol]["entry_price"] = current_price
                 records[symbol]["highest_price"] = current_price
@@ -108,11 +108,11 @@ while True:
             else:
                 print(f"  Not enough budget to buy {symbol} at ${current_price:.2f}")
 
-    
+        # SELL LOGIC
         elif shares_held > 0:
             if profit_pct >= 2.0:
                 print(f"  SELL {shares_held} shares of {symbol} at ${current_price:.2f} | profit: {profit_pct:.4f}%")
-                place_order(symbol, shares_held, "sell")  # REAL ORDER
+                place_order(symbol, shares_held, "sell")
                 records[symbol]["shares_held"] = 0
                 records[symbol]["entry_price"] = 0
                 records[symbol]["highest_price"] = 0
@@ -124,3 +124,6 @@ while True:
 
     print("--- Cycle complete. Waiting 60 seconds... ---\n")
     time.sleep(60)
+
+print("Finished 3 cycles. Bot shutting down.")
+
