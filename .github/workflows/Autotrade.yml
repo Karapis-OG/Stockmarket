@@ -1,4 +1,4 @@
-name: Trading Bot (Commit + Daily Session)
+name: Trading Bot (Commit + Daily Session, 3 Cycles)
 
 on:
   push:
@@ -28,10 +28,15 @@ jobs:
       run: |
         pip install requests
 
-    - name: Run trading bot (full 1pm–2:24pm session)
+    - name: Run trading bot (3 cycles only)
       run: |
-        echo "Starting trading bot session..."
-        end=$(( $(date +%s) + 5040 ))  # 84 minutes = 1:00 PM → 2:24 PM
-        while [ $(date +%s) -lt $end ]; do
+        echo "Starting 3-cycle trading bot session..."
+        cycles=0
+        while [ $cycles -lt 3 ]; do
+          echo "Running cycle $((cycles+1))..."
           python trading.py
+          cycles=$((cycles+1))
+          echo "Waiting 60 seconds before next cycle..."
+          sleep 60
         done
+        echo "Finished 3 cycles. Session complete."
