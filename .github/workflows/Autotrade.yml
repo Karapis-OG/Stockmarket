@@ -1,0 +1,31 @@
+name: Daily Trading Bot (1pm–2:24pm)
+
+on:
+  schedule:
+    # 1:00 PM CST = 18:00 UTC
+    - cron: "0 18 * * 1-5"
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.14.3"
+
+    - name: Install dependencies
+      run: |
+        pip install requests
+
+    - name: Run trading bot from 1:00 PM to 2:24 PM
+      run: |
+        echo "Starting trading bot session..."
+        end=$(( $(date +%s) + 5040 ))  # 84 minutes = 5040 seconds
+        while [ $(date +%s) -lt $end ]; do
+          python trading.py
+        done
