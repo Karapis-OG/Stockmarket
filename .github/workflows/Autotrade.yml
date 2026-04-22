@@ -28,7 +28,7 @@ jobs:
       run: |
         pip install requests
 
-    - name: Run trading bot (3 cycles only, but only inside time window)
+    - name: Run trading bot (3 cycles only, inside time window)
       run: |
         echo "Starting trading bot session..."
         
@@ -41,13 +41,7 @@ jobs:
           exit 0
         fi
         
-        cycles=0
-        while [ $cycles -lt 3 ]; do
-          echo "Running cycle $((cycles+1))..."
-          python trading.py
-          cycles=$((cycles+1))
-          echo "Waiting 60 seconds before next cycle..."
-          sleep 60
-        done
+        echo "Running trading bot for 3 cycles..."
+        python trading.py
         
-        echo "Finished 3 cycles. Session complete."
+        echo "Bot finished. Session complete."
