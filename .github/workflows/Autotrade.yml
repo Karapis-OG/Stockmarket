@@ -1,64 +1,53 @@
 name: Trading Bot (Commit + Daily Session, 3 Cycles)
 
 on:
-  workflow_dispatch:
-    inputs:
-      start_time:
-        description: "Time to start the bot (EST)"
-        default: "13:00"
-        required: true
-        type: string
-      stop_time:
-        description: "Time to stop the bot (EST)"
-        default: "14:24"
-        required: true
-        type: string
+  push:
+    branches:
+      - main
+      - master
+      - "*"     # runs on ANY branch you commit to
+
+  schedule:
+    # 1:00 PM CST/CDT = 18:00 UTC
+    - cron: "0 18 * * 1-5"
 
 jobs:
-  morning_session:
+  run-bot:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Pre‑market checks
-        run: |
-          echo "✔ Checking Alpaca buying power"
-          echo "✔ Ensuring no open positions"
-          echo "✔ Resetting bot state (candles, counters)"
-          echo "✔ Preparing for morning session"
+    - name: Checkout repo
+      uses: actions/checkout@v3
 
-      - name: Wait until market open
-        run: |
-          echo "⏳ Waiting until ${{ inputs.start_time }} EST to start trading"
-          # (In real use, you'd sleep until start_time)
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.14.3"
 
-      - name: Start trading bot
-        run: |
-          echo " Starting trading bot at ${{ inputs.start_time }} EST"
-          echo "Bot will run using:"
-          echo "- 5‑minute warmup"
-          echo "- MA5 trend logic"
-          echo "- Support/resistance entries"
-          echo "- Auto exits (TP + SL)"
-          echo "- 10% max position cap"
+    - name: Install dependencies
+      run: |
+        pip install requests
 
-      - name: Run during morning session
-        run: |
-          echo " Bot running from ${{ inputs.start_time }} to ${{ inputs.stop_time }}"
-          echo "Monitoring:"
-          echo "- Trend direction"
-          echo "- Entry signals"
-          echo "- Exit signals"
-          echo "- Position sizing"
-          echo "- Cooldown rules"
-
-      - name: Stop trading bot
-        run: |
-          echo " Stopping bot at ${{ inputs.stop_time }} EST"
-          echo "✔ Checking for open positions"
-          echo "✔ Allowing bot to exit or closing manually if needed"
-          echo "✔ Morning session complete"
-
-      - name: Session summary
-        run: |
-          echo " Morning session finished"
-          echo "Review logs and prepare for tomorrow"
+    - name: Run trading bot (3 cycles only, but only inside time window)
+      run: |
+        echo "Starting trading bot session..."
+        
+        # Get current time in HHMM format
+        now=$(date +%H%M)
+        
+        # Allowed window: 13:00 (1300) to 14:24 (1424)
+        if [ "$now" -lt 1300 ] || [ "$now" -gt 1424 ]; then
+          echo "Outside allowed trading window (13:00–14:24). Exiting."
+          exit 0
+        fi
+        
+        cycles=0
+        while [ $cycles -lt 3 ]; do
+          echo "Running cycle $((cycles+1))..."
+          python trading.py
+          cycles=$((cycles+1))
+          echo "Waiting 60 seconds before next cycle..."
+          sleep 60
+        done
+        
+        echo "Finished 3 cycles. Session complete."
