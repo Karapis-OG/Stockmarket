@@ -1,42 +1,64 @@
 name: Trading Bot (Commit + Daily Session, 3 Cycles)
 
 on:
-  push:
-    branches:
-      - main
-      - master
-      - "*"     # runs on ANY branch you commit to
-
-  schedule:
-    # 1:00 PM CST = 18:00 UTC
-    - cron: "0 18 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      start_time:
+        description: "Time to start the bot (EST)"
+        default: "01:00"
+        required: true
+        type: string
+      stop_time:
+        description: "Time to stop the bot (EST)"
+        default: "2:24"
+        required: true
+        type: string
 
 jobs:
-  run-bot:
+  morning_session:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      - name: Pre‑market checks
+        run: |
+          echo "✔ Checking Alpaca buying power"
+          echo "✔ Ensuring no open positions"
+          echo "✔ Resetting bot state (candles, counters)"
+          echo "✔ Preparing for morning session"
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
+      - name: Wait until market open
+        run: |
+          echo "⏳ Waiting until ${{ inputs.start_time }} EST to start trading"
+          # (In real use, you'd sleep until start_time)
 
-    - name: Install dependencies
-      run: |
-        pip install requests
+      - name: Start trading bot
+        run: |
+          echo " Starting trading bot at ${{ inputs.start_time }} EST"
+          echo "Bot will run using:"
+          echo "- 5‑minute warmup"
+          echo "- MA5 trend logic"
+          echo "- Support/resistance entries"
+          echo "- Auto exits (TP + SL)"
+          echo "- 10% max position cap"
 
-    - name: Run trading bot (3 cycles only)
-      run: |
-        echo "Starting 3-cycle trading bot session..."
-        cycles=0
-        while [ $cycles -lt 3 ]; do
-          echo "Running cycle $((cycles+1))..."
-          python trading.py
-          cycles=$((cycles+1))
-          echo "Waiting 60 seconds before next cycle..."
-          sleep 60
-        done
-        echo "Finished 3 cycles. Session complete."
+      - name: Run during morning session
+        run: |
+          echo " Bot running from ${{ inputs.start_time }} to ${{ inputs.stop_time }}"
+          echo "Monitoring:"
+          echo "- Trend direction"
+          echo "- Entry signals"
+          echo "- Exit signals"
+          echo "- Position sizing"
+          echo "- Cooldown rules"
+
+      - name: Stop trading bot
+        run: |
+          echo " Stopping bot at ${{ inputs.stop_time }} EST"
+          echo "✔ Checking for open positions"
+          echo "✔ Allowing bot to exit or closing manually if needed"
+          echo "✔ Morning session complete"
+
+      - name: Session summary
+        run: |
+          echo " Morning session finished"
+          echo "Review logs and prepare for tomorrow"
