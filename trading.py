@@ -62,7 +62,9 @@ def check_cooldown(last_time, cooldown=60):
 
 print("Starting trading bot...\n")
 
-for _ in range(3):   # run exactly 3 cycles
+for cycle in range(3):
+    print(f"=== INTERNAL BOT CYCLE {cycle+1} / 3 ===")
+
     for symbol in watchlist:
 
         print(f"--- Checking {symbol} ---")
@@ -122,8 +124,8 @@ for _ in range(3):   # run exactly 3 cycles
 
         print()
 
-    print("--- Cycle complete. Waiting 60 seconds... ---\n")
+    print("--- INTERNAL CYCLE COMPLETE. Waiting 60 seconds... ---\n")
     time.sleep(60)
 
-print("Finished 3 cycles. Bot shutting down.")
+print("Bot finished 3 internal cycles. Exiting.")
 
