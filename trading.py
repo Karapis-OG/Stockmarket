@@ -7,7 +7,7 @@ BASE_URL = "https://paper-api.alpaca.markets/v2"
 DATA_URL = "https://data.alpaca.markets/v2/stocks"
 ORDER_URL = "https://paper-api.alpaca.markets/v2/orders"
 
-watchlist = ["AMC", "SHOP", "MCD"]
+watchlist = ["AMC", "SHOP", "MCD", "NKE", "UBER"]
 portfolio_value = 100000
 
 records = {}
