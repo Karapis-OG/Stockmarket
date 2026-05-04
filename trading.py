@@ -1,7 +1,7 @@
 import requests
 import time
-API_KEY = "PKAIZH7KBLGMWYTOPVZCQFROLS"   
-API_SECRET = "AVM2eeThUTokzF7PtpkPScDhHKdFGMGwCiVJg2egV4iq"
+API_KEY = "PKUINFE2E2QRIJV5NPGI7SG23C"   
+API_SECRET = "8iyQcPjpNNgwuoS5cV6fgqXRq2YDcecegebKczaoWrNS"
 BASE_URL = "https://paper-api.alpaca.markets/v2"
 
 DATA_URL = "https://data.alpaca.markets/v2/stocks"
