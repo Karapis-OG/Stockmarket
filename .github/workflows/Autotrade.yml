@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - master
-      - "*"     # runs on ANY branch you commit to
+      - "*"    # runs on ANY branch you commit to
 
   schedule:
     # 2:15 PM CST/CDT = 19:15 UTC
